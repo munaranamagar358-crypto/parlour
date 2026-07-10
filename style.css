@@ -215,22 +215,22 @@ header {
 }
 
 /* ==========================================================================
-   CUSTOMER & APPOINTMENT MANAGEMENT (AAPKA CODE + IMPROVEMENTS)
+   CUSTOMER & APPOINTMENT MANAGEMENT (FIXED & MERGED SELECTORS)
    ========================================================================== */
-.customers {
+.customers, .appointments {
     max-width: 1200px;
     margin: 60px auto;
     padding: 20px;
 }
 
-.customers h1 {
+.customers h1, .appointments h1 {
     text-align: center;
     color: #d63384;
     margin-bottom: 30px;
     font-size: 36px;
 }
 
-/* Dono forms par grid layout lagaya hai */
+/* Form layouts on grid */
 #customerForm, #appointmentForm {
     background: #fff;
     padding: 25px;
