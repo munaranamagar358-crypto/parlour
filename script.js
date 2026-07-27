@@ -1,12 +1,11 @@
-// ==========================================================================
-// Glow Beauty Parlour Management System - Core Script
-// ==========================================================================
+// ==============================
+// Glow Beauty Parlour Management System
+// ==============================
 
-// LocalStorage Data Load (Agar data pehle se hai toh loading, nahi toh empty array)
-let customers = JSON.parse(localStorage.getItem("customers")) || [];
+// Load Appointments from Local Storage
 let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
 
-// Fixed Services List
+// Services
 const services = [
     "Facial Treatment",
     "Hair Cut & Styling",
@@ -16,121 +15,89 @@ const services = [
     "Spa & Massage"
 ];
 
-// 1. DASHBOARD COUNTERS UPDATE
-function updateDashboard(){
-    if(document.getElementById("customerCount")) {
-        document.getElementById("customerCount").textContent = customers.length;
-    }
-    if(document.getElementById("serviceCount")) {
-        document.getElementById("serviceCount").textContent = services.length;
-    }
-    if(document.getElementById("appointmentCount")) {
-        document.getElementById("appointmentCount").textContent = appointments.length;
-    }
-}
+// ==============================
+// Save Data
+// ==============================
 
-// 2. SAVE DATA TO LOCAL STORAGE
-function saveData(){
-    localStorage.setItem("customers", JSON.stringify(customers));
+function saveData() {
     localStorage.setItem("appointments", JSON.stringify(appointments));
 }
 
-// ==========================================================================
-// CUSTOMER MANAGEMENT LOGIC
-// ==========================================================================
+// ==============================
+// Dashboard
+// ==============================
 
-// Add Customer
-function addCustomer(name, phone, email, address){
-    customers.push({
-        id: Date.now(),
-        name: name,
-        phone: phone,
-        email: email || "N/A",
-        address: address || "N/A"
-    });
+function updateDashboard() {
 
-    saveData();
-    updateDashboard();
-    displayCustomers();
+    const customerCount = document.getElementById("customerCount");
+    const serviceCount = document.getElementById("serviceCount");
+    const appointmentCount = document.getElementById("appointmentCount");
+
+    if (customerCount) customerCount.textContent = appointments.length;
+    if (serviceCount) serviceCount.textContent = services.length;
+    if (appointmentCount) appointmentCount.textContent = appointments.length;
+
 }
 
-// Delete Customer
-function deleteCustomer(id){
-    customers = customers.filter(customer => customer.id !== id);
+// ==============================
+// Appointment Functions
+// ==============================
 
-    saveData();
-    updateDashboard();
-    displayCustomers();
-}
+function addAppointment(customer, service, date, time) {
 
-// Display Customers in Table
-function displayCustomers(){
-    const table = document.getElementById("customerTable");
-    if(!table) return;
-
-    table.innerHTML = "";
-
-    if(customers.length === 0) {
-        table.innerHTML = <tr><td colspan="5" style="color: #888;">No customers added yet.</td></tr>;
-        return;
-    }
-
-    customers.forEach(customer => {
-        table.innerHTML += `
-        <tr>
-            <td>${customer.name}</td>
-            <td>${customer.phone}</td>
-            <td>${customer.email}</td>
-            <td>${customer.address}</td>
-            <td>
-                <button onclick="deleteCustomer(${customer.id})">Delete</button>
-            </td>
-        </tr>
-        `;
-    });
-}
-
-// ==========================================================================
-// APPOINTMENT MANAGEMENT LOGIC
-// ==========================================================================
-
-// Add Appointment
-function addAppointment(customer, service, date, time){
     appointments.push({
         id: Date.now(),
-        customer: customer,
-        service: service,
-        date: date,
-        time: time
+        customer,
+        service,
+        date,
+        time
     });
 
     saveData();
+    displayAppointments();
     updateDashboard();
-    displayAppointments(); // Fixed: Ab add hote hi table update hogi
+
 }
 
-// Delete / Cancel Appointment
-function deleteAppointment(id){
+function deleteAppointment(id) {
+
     appointments = appointments.filter(app => app.id !== id);
 
     saveData();
+    displayAppointments();
     updateDashboard();
-    displayAppointments(); // Fixed: Ab delete hote hi table update hogi
+
 }
 
-// Display Appointments in Table (Fixed: Yeh function missing tha)
-function displayAppointments(){
+window.deleteAppointment = deleteAppointment;
+
+// ==============================
+// Display Appointments
+// ==============================
+
+function displayAppointments() {
+
     const table = document.getElementById("appointmentTable");
-    if(!table) return;
+
+    if (!table) return;
 
     table.innerHTML = "";
 
-    if(appointments.length === 0) {
-        table.innerHTML = <tr><td colspan="5" style="color: #888;">No appointments booked yet.</td></tr>;
+    if (appointments.length === 0) {
+
+        table.innerHTML = `
+        <tr>
+            <td colspan="5" style="text-align:center;">
+                No Appointments Found
+            </td>
+        </tr>
+        `;
+
         return;
     }
 
     appointments.forEach(app => {
+
         table.innerHTML += `
         <tr>
             <td>${app.customer}</td>
@@ -138,53 +105,72 @@ function displayAppointments(){
             <td>${app.date}</td>
             <td>${app.time}</td>
             <td>
-                <button onclick="deleteAppointment(${app.id})">Cancel</button>
+                <button onclick="deleteAppointment(${app.id})">
+                    Cancel
+                </button>
             </td>
         </tr>
         `;
+
     });
+
 }
 
-// ==========================================================================
-// PAGE INITIALIZATION & FORM LISTENERS
-// ==========================================================================
-window.onload = function(){
-    // Initial UI Render
+// ==============================
+// Smooth Scroll
+// ==============================
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+    anchor.addEventListener("click", function(e) {
+
+        const target = document.querySelector(this.getAttribute("href"));
+
+        if(target){
+
+            e.preventDefault();
+
+            target.scrollIntoView({
+                behavior:"smooth"
+            });
+
+        }
+
+    });
+
+});
+
+// ==============================
+// Page Load
+// ==============================
+
+document.addEventListener("DOMContentLoaded", () => {
+
     updateDashboard();
-    displayCustomers();
-    displayAppointments(); // Fixed: Page load par purane appointments dikhenge
+    displayAppointments();
 
-    // Customer Form Submit Listener
-    const customerForm = document.getElementById("customerForm");
-    if(customerForm){
-        customerForm.addEventListener("submit", function(e){
-            e.preventDefault();
-            
-            addCustomer(
-                document.getElementById("customerName").value,
-                document.getElementById("customerPhone").value,
-                document.getElementById("customerEmail").value,
-                document.getElementById("customerAddress").value
-            );
-            
-            customerForm.reset();
-        });
-    }
-
-    // Appointment Form Submit Listener (Fixed: Yeh listener missing tha)
     const appointmentForm = document.getElementById("appointmentForm");
-    if(appointmentForm){
-        appointmentForm.addEventListener("submit", function(e){
-            e.preventDefault();
-            
-            addAppointment(
-                document.getElementById("appCustomer").value,
-                document.getElementById("appService").value,
-                document.getElementById("appDate").value,
-                document.getElementById("appTime").value
-            );
-            
-            appointmentForm.reset();
-        });
-    }
-}
+
+    appointmentForm.addEventListener("submit", function(e){
+
+        e.preventDefault();
+
+        const customer = document.getElementById("appCustomer").value.trim();
+        const service = document.getElementById("appService").value;
+        const date = document.getElementById("appDate").value;
+        const time = document.getElementById("appTime").value;
+
+        if(customer==="" || service==="" || date==="" || time===""){
+            alert("Please fill all fields!");
+            return;
+        }
+
+        addAppointment(customer,service,date,time);
+
+        alert("Appointment Booked Successfully!");
+
+        appointmentForm.reset();
+
+    });
+
+});
