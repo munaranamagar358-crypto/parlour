@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account | Glow Beauty Parlour</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+background:linear-gradient(135deg,#ff8ab5,#d63384);
+}
+
+.container{
+width:420px;
+background:#fff;
+padding:35px;
+border-radius:15px;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+h2{
+text-align:center;
+color:#d63384;
+margin-bottom:25px;
+}
+
+input{
+width:100%;
+padding:13px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:16px;
+}
+
+input:focus{
+border-color:#d63384;
+outline:none;
+}
+
+button{
+width:100%;
+padding:14px;
+background:#d63384;
+color:white;
+border:none;
+border-radius:8px;
+font-size:17px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+background:#b32167;
+}
+
+p{
+text-align:center;
+margin-top:20px;
+}
+
+a{
+color:#d63384;
+font-weight:bold;
+text-decoration:none;
+}
+
+#error{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+}
+
+.success{
+color:green;
+}
+
+.fail{
+color:red;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>Create Account</h2>
+
+<input type="text" id="name" placeholder="Full Name">
+
+<input type="email" id="email" placeholder="Email Address">
+
+<input type="password" id="password" placeholder="Password">
+
+<input type="password" id="confirmPassword" placeholder="Confirm Password">
+
+<button id="signupBtn">Create Account</button>
+
+<div id="error"></div>
+
+<p>
+Already have an account?
+<a href="login.html">Login</a>
+</p>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+updateProfile
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCKaXbkjTL5EnsAP4OiNcI2IPPZI9mxBXY",
+  authDomain: "parlour-a9fcb.firebaseapp.com",
+  projectId: "parlour-a9fcb",
+  storageBucket: "parlour-a9fcb.firebasestorage.app",
+  messagingSenderId: "1085697047614",
+  appId: "1:1085697047614:web:6a8cc2ffa5776f5b90256f",
+  measurementId: "G-NZ7W3VES27"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+document.getElementById("signupBtn").addEventListener("click", async ()=>{
+
+const name=document.getElementById("name").value.trim();
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+const confirm=document.getElementById("confirmPassword").value;
+const error=document.getElementById("error");
+
+error.innerHTML="";
+error.className="";
+
+if(name===""){
+error.innerHTML="Please enter your full name.";
+error.className="fail";
+return;
+}
+
+if(password!==confirm){
+error.innerHTML="Passwords do not match.";
+error.className="fail";
+return;
+}
+
+try{
+
+const userCredential=await createUserWithEmailAndPassword(auth,email,password);
+
+await updateProfile(userCredential.user,{
+displayName:name
+});
+
+error.innerHTML="Account created successfully!";
+error.className="success";
+
+setTimeout(()=>{
+window.location.href="login.html";
+},1500);
+
+}catch(err){
+
+error.innerHTML=err.message;
+error.className="fail";
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glow Beauty Parlour Login</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#ff8fb1,#ff5f9e);
+}
+
+.container{
+width:380px;
+background:#fff;
+padding:30px;
+border-radius:15px;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+h2{
+text-align:center;
+color:#d63384;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+}
+
+.login{
+background:#d63384;
+color:white;
+}
+
+.signup{
+background:#6c757d;
+color:white;
+}
+
+button:hover{
+opacity:.9;
+}
+
+#msg{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Glow Beauty Parlour</h2>
+
+<input type="email" id="email" placeholder="Enter Email" required>
+
+<input type="password" id="password" placeholder="Enter Password" required>
+
+<button class="login" id="loginBtn">Login</button>
+
+<button type="button" class="signup" onclick="window.location.href='signup.html'">
+    Create Account
+</button>
+
+<p id="msg"></p>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+
+import {
+getAuth,
+signInWithEmailAndPassword,
+createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCKaXbkjTL5EnsAP4OiNcI2IPPZI9mxBXY",
+authDomain: "parlour-a9fcb.firebaseapp.com",
+projectId: "parlour-a9fcb",
+storageBucket: "parlour-a9fcb.firebasestorage.app",
+messagingSenderId: "1085697047614",
+appId: "1:1085697047614:web:6a8cc2ffa5776f5b90256f",
+measurementId: "G-NZ7W3VES27"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const email=document.getElementById("email");
+const password=document.getElementById("password");
+const msg=document.getElementById("msg");
+
+// LOGIN
+document.getElementById("loginBtn").onclick=async()=>{
+
+try{
+
+await signInWithEmailAndPassword(auth,email.value,password.value);
+
+msg.style.color="green";
+msg.innerHTML="Login Successful";
+
+setTimeout(()=>{
+window.location.href="index.html";
+},1000);
+
+}catch(error){
+
+msg.style.color="red";
+msg.innerHTML=error.message;
+
+}
+
+};
+
+// SIGN UP
+document.getElementById("signupBtn").onclick=async()=>{
+
+try{
+
+await createUserWithEmailAndPassword(auth,email.value,password.value);
+
+msg.style.color="green";
+msg.innerHTML="Account Created Successfully";
+
+}catch(error){
+
+msg.style.color="red";
+msg.innerHTML=error.message;
+
+}
+
+};
+
+</script>
+
+</body>
+</html>
