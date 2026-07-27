@@ -154,6 +154,21 @@ header {
     text-transform: uppercase;
 }
 
+
+
+.login-btn{
+    background:#d63384;
+    color:white !important;
+    padding:10px 20px;
+    border-radius:25px;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.login-btn:hover{
+    background:#b0256d;
+}
+
 /* ==========================================================================
    BEAUTY SERVICES GRID
    ========================================================================== */
